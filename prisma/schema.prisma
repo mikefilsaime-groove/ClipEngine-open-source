@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Project {
+  id              String   @id @default(cuid())
+  name            String
+  sourceVideoPath String
+  outputFolder    String
+  duration        Float?
+  status          String   @default("importing")
+  archived        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  settings   ProjectSettings?
+  transcript Transcript?
+  candidates Candidate[]
+  speakers   Speaker[]
+}
+
+model ProjectSettings {
+  id                     String  @id @default(cuid())
+  projectId              String  @unique
+  project                Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  captionsEnabled        Boolean @default(true)
+  captionPreset          String  @default("bold-impact")
+  captionPosition        String  @default("auto")
+  captionSize            String  @default("medium")
+  captionFont            String  @default("Inter")
+  captionColor           String  @default("#FFFFFF")
+  captionActiveWordColor String  @default("#00C853")
+  captionStressWordColor String  @default("#FFD600")
+  profanityFilterEnabled Boolean @default(false)
+  profanityWordList      String  @default("[]")
+  fastCutsEnabled        Boolean @default(false)
+  fastCutsThreshold      Float   @default(1.5)
+  fillerRemovalEnabled   Boolean @default(false)
+  fillerWordList         String  @default("[]")
+  defaultExportQuality   String  @default("1080p")
+  watermarkEnabled       Boolean @default(false)
+  watermarkPath          String?
+  watermarkPosition      String  @default("bottom-right")
+  watermarkOpacity       Float   @default(0.7)
+  watermarkSize          String  @default("medium")
+  brandStripEnabled      Boolean @default(false)
+  brandStripPosition     String  @default("bottom")
+  brandStripPreset       String  @default("dark-classic")
+  brandStripBgColor      String  @default("#000000")
+  brandStripTextColor    String  @default("#FFFFFF")
+  brandStripText         String  @default("")
+  brandStripFont         String  @default("Inter")
+  findExtendedShorts     Boolean @default(true)
+}
+
+model Transcript {
+  id        String @id @default(cuid())
+  projectId String @unique
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fullText  String
+
+  segments TranscriptSegment[]
+}
+
+model TranscriptSegment {
+  id           String     @id @default(cuid())
+  transcriptId String
+  transcript   Transcript @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+  word         String
+  startTime    Float
+  endTime      Float
+  speaker      String     @default("SPEAKER_0")
+  confidence   Float      @default(1.0)
+
+  @@index([transcriptId, startTime])
+}
+
+model Speaker {
+  id        String  @id @default(cuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  speakerId String
+  label     String
+
+  @@unique([projectId, speakerId])
+}
+
+model Candidate {
+  id             String       @id @default(cuid())
+  projectId      String
+  project        Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type           String
+  title          String
+  startTime      Float
+  endTime        Float
+  trimIn         Float
+  trimOut        Float
+  viralityScore  Int
+  reasoning      String
+  status         String       @default("candidate")
+  speakerLayout  String?
+  faceLayout     String?
+  brandingOverride   String?
+  watermarkOverride  String?
+  youtubeSuggestions String?
+  tags               String?
+  grade              String?
+  recommendation     String?
+  hookStrength       Int?
+  completionPull     Int?
+  platformPlay       String?
+  shareTrigger       String?
+  exportQuality  String?
+  outputPath     String?
+  previewPath    String?
+  frontBumperId  String?
+  frontBumper    BumperVideo? @relation("FrontBumper", fields: [frontBumperId], references: [id], onDelete: SetNull)
+  rearBumperId   String?
+  rearBumper     BumperVideo? @relation("RearBumper", fields: [rearBumperId], references: [id], onDelete: SetNull)
+  createdAt      DateTime     @default(now())
+
+  @@index([projectId, type, viralityScore])
+  @@index([projectId, status])
+}
+
+model BumperVideo {
+  id             String      @id @default(cuid())
+  name           String
+  filePath       String
+  tag            String      @default("both")
+  duration       Float?
+  isDefaultFront Boolean     @default(false)
+  isDefaultRear  Boolean     @default(false)
+  createdAt      DateTime    @default(now())
+
+  frontCandidates Candidate[] @relation("FrontBumper")
+  rearCandidates  Candidate[] @relation("RearBumper")
+}
+
+model AppSettings {
+  id                    String   @id @default("singleton")
+  geminiApiKey          String?
+  hfToken               String?
+  defaultCaptionConfig   String?
+  defaultBrandingConfig  String?
+  defaultWatermarkConfig String?
+  defaultAudioConfig     String?
+  updatedAt             DateTime @updatedAt
+}
+
+model RenderJob {
+  id               String   @id @default(cuid())
+  projectId        String
+  status           String   @default("queued")
+  totalItems       Int      @default(0)
+  completedItems   Int      @default(0)
+  failedItems      Int      @default(0)
+  estimatedSeconds Int      @default(0)
+  actualSeconds    Int?
+  quality          String   @default("1080p")
+  startedAt        DateTime?
+  finishedAt       DateTime?
+  createdAt        DateTime @default(now())
+  cancelRequested  Boolean  @default(false)
+
+  items RenderItem[]
+
+  @@index([projectId, status])
+}
+
+model RenderItem {
+  id            String    @id @default(cuid())
+  jobId         String
+  job           RenderJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidateId   String
+  orderIndex    Int
+  title         String
+  duration      Float
+  isVertical    Boolean   @default(false)
+  status        String    @default("pending")
+  progressPct   Float     @default(0)
+  startedAt     DateTime?
+  finishedAt    DateTime?
+  errorMessage  String?
+  outputPath    String?
+
+  @@index([jobId, orderIndex])
+}
