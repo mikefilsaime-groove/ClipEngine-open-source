@@ -2,6 +2,32 @@
 
 A local-first podcast clip machine packaged as a desktop Electron app. Pick a video, run the processing pipeline, and get AI-identified clips (3-20 min landscape) and shorts (≤60s classic or 1-3 min extended, vertical 9:16) — all on your local machine, no cloud video processing costs.
 
+## Install with an AI agent
+
+Copy this entire prompt into your coding agent. This public repository has no prebuilt installer yet; the prompt installs and runs the source on your computer. Keep API keys in the app, never in a chat or commit.
+
+```text
+Install and run ClipEngine from:
+https://github.com/mikefilsaime-groove/ClipEngine-open-source
+
+Work through this checklist:
+1. Check my operating system and whether Node.js 22, npm, Git, Python 3.10+, and FFmpeg are available. Read the repository README and the in-app User Guide first.
+2. Clone the public repository into a new local folder, or use an existing clean checkout.
+3. Run npm ci, npx prisma generate, and npm run db:setup.
+4. Set up the Python helper with bash python/setup.sh on macOS/Linux. On Windows, use an available Bash environment or explain the platform blocker clearly.
+5. Start the app with npm run dev and give me the local URL. If I ask for the desktop wrapper, use npm run electron:dev after the source setup works.
+6. Have me enter my own Gemini API key and Hugging Face token in App Settings, and have me accept the pyannote model terms in my browser.
+7. Use App Settings to download the Whisper model, then verify the app loads, the built-in /guide opens, and the setup status is clear.
+
+Safety rules:
+- Do not ask me to paste secrets into chat.
+- Do not put secrets in source files, commit them, or publish them.
+- If a dependency or platform step fails, explain the exact blocker and next action; do not claim success until verified.
+- Do not download a release binary unless one is actually published in this public repository.
+```
+
+The built-in User Guide is at **`/guide`** after launch, with a **Guide** link on the dashboard and in the settings menu.
+
 ## What It Does
 
 1. **Pick Video** — native OS file picker, file referenced in-place, project auto-named from filename
@@ -47,13 +73,14 @@ A local-first podcast clip machine packaged as a desktop Electron app. Pick a vi
 ### 1. Install dependencies
 
 ```bash
-npm install
+npm ci
 ```
 
 ### 2. Set up database
 
 ```bash
-npx prisma db push
+npx prisma generate
+npm run db:setup
 ```
 
 ### 3. Start the app
@@ -159,10 +186,11 @@ Videos and outputs are stored at:
 | `npm run dev` | Start development server (Turbopack) |
 | `npm run build` | Build for production |
 | `npm run lint` | Run ESLint |
+| `npm run db:setup` | Create the local SQLite file and apply the Prisma schema |
 | `npm run electron:dev` | Run Electron wrapper (dev) |
 | `npm run electron:build` | Build Next.js + package Electron installers |
 | `npx prisma studio` | Open database browser |
-| `npx prisma db push` | Push schema changes (dev) |
+| `npx prisma db push` | Push later schema changes to an existing local database |
 | `npx prisma generate` | Regenerate Prisma client |
 
 ## Releases

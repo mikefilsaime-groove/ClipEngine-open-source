@@ -57,8 +57,9 @@ The Python sidecar starts in the background — it may take 10-30 seconds to ful
 ### Running from source (developers)
 
 ```bash
-npm install
-npx prisma db push
+npm ci
+npx prisma generate
+npm run db:setup
 npm run dev
 ```
 

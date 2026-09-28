@@ -3,13 +3,31 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { Download, Github, ArrowLeft, ExternalLink, Shield } from "lucide-react"
+import { Download, Github, ArrowLeft, ExternalLink, Shield, Copy, Check, BookOpen, Terminal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
 /* ── Constants ── */
 
 const REPO = "mikefilsaime-groove/ClipEngine-open-source"
+
+const INSTALL_PROMPT = `Install and run ClipEngine from:
+https://github.com/mikefilsaime-groove/ClipEngine-open-source
+
+Work through this checklist:
+1. Check my operating system and whether Node.js 22, npm, Git, Python 3.10+, and FFmpeg are available. Read the repository README and the in-app User Guide first.
+2. Clone the public repository into a new local folder, or use an existing clean checkout.
+3. Run npm ci, npx prisma generate, and npm run db:setup.
+4. Set up the Python helper with bash python/setup.sh on macOS/Linux. On Windows, use an available Bash environment or explain the platform blocker clearly.
+5. Start the app with npm run dev and give me the local URL. If I ask for the desktop wrapper, use npm run electron:dev after the source setup works.
+6. Have me enter my own Gemini API key and Hugging Face token in App Settings, and have me accept the pyannote model terms in my browser.
+7. Use App Settings to download the Whisper model, then verify the app loads, the built-in /guide opens, and the setup status is clear.
+
+Safety rules:
+- Do not ask me to paste secrets into chat.
+- Do not put secrets in source files, commit them, or publish them.
+- If a dependency or platform step fails, explain the exact blocker and next action; do not claim success until verified.
+- Do not download a release binary unless one is actually published in this public repository.`
 
 const WAVE_BARS = [
   50, 72, 38, 85, 55, 68, 42, 80, 48, 75, 35, 88, 52, 65, 40, 78,
@@ -82,6 +100,13 @@ export default function DownloadPage() {
   const [detectedOS, setDetectedOS] = useState<DetectedOS>("unknown")
   const [loading, setLoading] = useState(true)
   const [noRelease, setNoRelease] = useState(false)
+  const [promptCopied, setPromptCopied] = useState(false)
+
+  async function copyInstallPrompt() {
+    await navigator.clipboard.writeText(INSTALL_PROMPT)
+    setPromptCopied(true)
+    window.setTimeout(() => setPromptCopied(false), 2000)
+  }
 
   useEffect(() => {
     // Detect OS
@@ -146,6 +171,13 @@ export default function DownloadPage() {
             <Github className="size-4" />
             GitHub
           </a>
+          <Link
+            href="/guide"
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <BookOpen className="size-4" />
+            User Guide
+          </Link>
         </nav>
 
         <div className="container mx-auto max-w-3xl px-4">
@@ -285,6 +317,33 @@ export default function DownloadPage() {
               </div>
             </section>
           )}
+
+          {/* ── Agent install prompt ── */}
+          <section className="pb-10 animate-fade-in-up" style={{ animationDelay: "0.36s" }}>
+            <div className="rounded-xl border border-primary/20 bg-primary/[0.04] dark:bg-primary/[0.07] p-5">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Terminal className="size-4 text-primary" />
+                    <h2 className="text-base font-semibold text-foreground">Install with your AI agent</h2>
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Copy this prompt into Claude Code, Codex, Cursor, or another coding agent to install the open-source version safely.
+                  </p>
+                </div>
+                <Button type="button" variant="outline" size="sm" onClick={copyInstallPrompt} className="shrink-0">
+                  {promptCopied ? <Check className="size-4 mr-1.5" /> : <Copy className="size-4 mr-1.5" />}
+                  {promptCopied ? "Copied" : "Copy prompt"}
+                </Button>
+              </div>
+              <pre className="mt-4 max-h-64 overflow-auto whitespace-pre-wrap rounded-lg border bg-background/80 p-4 text-xs leading-relaxed text-muted-foreground">
+                {INSTALL_PROMPT}
+              </pre>
+              <p className="mt-3 text-xs text-muted-foreground">
+                The prompt tells the agent to keep your Gemini and Hugging Face credentials local, never commit them, and verify each setup step.
+              </p>
+            </div>
+          </section>
 
           {/* ── Unsigned Build Notes ── */}
           <section className="pb-16 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>

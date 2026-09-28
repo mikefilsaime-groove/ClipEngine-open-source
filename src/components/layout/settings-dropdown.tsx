@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes"
 import Link from "next/link"
-import { Settings, Sun, Moon, Palette, KeyRound } from "lucide-react"
+import { Settings, Sun, Moon, Palette, KeyRound, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuTrigger,
@@ -46,6 +46,12 @@ export function SettingsDropdown() {
           <Link href="/settings">
             <KeyRound className="mr-2 size-4" />
             App Settings
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/guide">
+            <BookOpen className="mr-2 size-4" />
+            User Guide
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
