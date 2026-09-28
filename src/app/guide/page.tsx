@@ -308,7 +308,7 @@ export default function GuidePage() {
               <SectionHeader
                 icon={Rocket}
                 title="Getting Started"
-                description="ClipEngine runs entirely on your Mac — no internet subscription required. Here's what you need to do before your first project."
+                description="ClipEngine runs locally on your Mac, Windows PC, or Linux machine — no internet subscription required. Here's what you need to do before your first project."
                 badgeLabel="Getting Started"
                 badgeClass="bg-violet-500/10 text-violet-600 dark:text-violet-400"
                 iconClass="text-violet-600 dark:text-violet-400"
@@ -325,7 +325,7 @@ export default function GuidePage() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-muted-foreground">
-                      ClipEngine is a native desktop application (built with Electron) that runs entirely on your Mac, Windows PC, or Linux machine. Everything — the AI analysis, transcription, video rendering — happens locally. Your videos never leave your computer.
+                      ClipEngine is a native desktop application (built with Electron) that runs on your Mac, Windows PC, or Linux machine. Everything — the transcription and video rendering — happens locally. Your videos never leave your computer. Gemini and Hugging Face are contacted only for the AI features that need them.
                     </p>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <FeatureCard
@@ -369,11 +369,11 @@ export default function GuidePage() {
                       <Cpu className="h-5 w-5 text-violet-600" />
                       What You Need Before Processing Your First Video
                     </CardTitle>
-                    <CardDescription>One extra step — the Python helper for speaker detection</CardDescription>
+                    <CardDescription>One extra step — install the Python helper for speaker detection</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-muted-foreground">
-                      ClipEngine's speaker detection and face layout features rely on a small Python helper program called the "sidecar" that needs to be started separately. You only need to do the setup once — after that, starting it takes just one command.
+                      ClipEngine's speaker detection and face layout features rely on a Python helper called the "sidecar." Set it up once in App Settings. The desktop app starts it automatically after setup; when running the source in a browser, start it from a terminal.
                     </p>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <FeatureCard
@@ -400,7 +400,7 @@ export default function GuidePage() {
                       <Play className="h-5 w-5 text-emerald-600" />
                       Starting the Python Sidecar
                     </CardTitle>
-                    <CardDescription>Do this once before your first project — then it's just one command each time</CardDescription>
+                    <CardDescription>Manual steps for running ClipEngine from source in a browser</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <Step
@@ -421,7 +421,7 @@ export default function GuidePage() {
                       isLast
                     />
                     <TipBox title="Keep the Terminal Open">
-                      Keep this terminal window open the entire time you use ClipEngine. If you close it, the Speaker Detection step will fail. You can minimize the window — just don't close it.
+                      When running ClipEngine from source in a browser, keep this terminal window open while you use speaker detection. The Electron desktop app starts the sidecar for you after setup.
                     </TipBox>
                   </CardContent>
                 </Card>
@@ -478,7 +478,7 @@ export default function GuidePage() {
               <SectionHeader
                 icon={KeyRound}
                 title="API Keys"
-                description="ClipEngine uses two external AI services. Both have free tiers and take about two minutes to set up. Your keys are stored locally in the app's database and never leave your computer."
+                description="ClipEngine uses two external AI services. Both have free tiers. Your keys are stored in the local app database and used for requests to those services."
                 badgeLabel="Required Setup"
                 badgeClass="bg-primary/10 text-primary border border-primary/20"
                 iconClass="text-primary"
@@ -862,7 +862,7 @@ export default function GuidePage() {
                       />
                     </div>
                     <TipBox title="Remember">
-                      The Python sidecar must be running before you click Run on this step. If you see an error, open a terminal and start it: source python/venv/bin/activate && python python/sidecar.py
+                      The Python sidecar must be running before you click Run on this step. If you see an error, open a terminal and start it: source ~/.clipengine-venv/bin/activate && python python/sidecar.py
                     </TipBox>
                   </CardContent>
                 </Card>

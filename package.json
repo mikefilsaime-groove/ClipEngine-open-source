@@ -5,6 +5,7 @@
   "main": "electron/main.js",
   "scripts": {
     "dev": "next dev",
+    "db:setup": "node -e \"require('node:fs').closeSync(require('node:fs').openSync('dev.db','a'))\" && prisma db push",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
